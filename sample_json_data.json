@@ -1,0 +1,36 @@
+{
+  "name": "Custom E-commerce Platform",
+  "project_name": "Custom E-commerce Platform",
+  "description": "A revolutionary e-commerce platform with AI-powered recommendations and seamless user experience",
+  "category": "E-commerce",
+  "key_features": [
+    "AI-powered product recommendations based on user behavior",
+    "Real-time inventory management with automated restocking",
+    "Advanced analytics dashboard for merchants",
+    "Multi-currency and multi-language support",
+    "Integrated social commerce features"
+  ],
+  "pages": [{
+    "name": "E-commerce Journey",
+    "key_frames": [
+      {"name": "Smart Homepage", "description": "AI-curated product showcase"},
+      {"name": "Product Discovery", "description": "Advanced search and filtering"},
+      {"name": "Product Details", "description": "360° product view with AR"},
+      {"name": "Smart Cart", "description": "AI-optimized checkout process"},
+      {"name": "Order Tracking", "description": "Real-time delivery updates"},
+      {"name": "Review System", "description": "Social proof and ratings"}
+    ]
+  }],
+  "colors": {
+    "Primary": "#FF6B35",
+    "Secondary": "#F7931E",
+    "Accent": "#FFD23F",
+    "Background": "#FFFFFF"
+  },
+  "user_flows": "Discovery -> Product View -> Add to Cart -> Checkout -> Payment -> Tracking -> Review",
+  "technical_requirements": {
+    "frontend": "Next.js with TypeScript and Tailwind CSS",
+    "backend": "Node.js with GraphQL and microservices architecture",
+    "database": "MongoDB with Redis caching and Elasticsearch for search"
+  }
+}

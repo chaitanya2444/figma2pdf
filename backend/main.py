@@ -87,14 +87,14 @@ async def health():
 @app.post("/api/generate-pdf")
 async def generate_pdf(figma_link: str = Form(...), report_file: UploadFile = File(default=None)):
     try:
-        # Parse Figma link with LLM (no token needed)
-        figma_data = parse_figma_with_llm(figma_link)
-        
-        # If JSON uploaded, merge it
+        # Handle JSON upload
+        json_data = None
         if report_file and report_file.filename:
             report_content = await report_file.read()
-            uploaded_data = json.loads(report_content)
-            figma_data.update(uploaded_data)
+            json_data = json.loads(report_content)
+        
+        # Parse Figma link with LLM and merge with JSON
+        figma_data = parse_figma_with_llm(figma_link, json_data)
         
         # Generate PDF
         pdf_path = generate_pdf_from_data(figma_data)

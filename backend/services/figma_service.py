@@ -12,7 +12,7 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY)
 
-def parse_figma_with_llm(figma_link: str) -> Dict[str, Any]:
+def parse_figma_with_llm(figma_link: str, json_data: Dict[str, Any] = None) -> Dict[str, Any]:
     """Generate comprehensive AI analysis of Figma design"""
     
     # Extract unique elements from URL for dynamic analysis
@@ -93,74 +93,38 @@ Be creative and make each response unique based on the URL! No generic content!
         
         parsed_data = json.loads(raw_text.strip())
         # Ensure comprehensive structure
-        return expand_ai_response(parsed_data)
+        result = expand_ai_response(parsed_data)
         
     except Exception as e:
         print(f"AI analysis failed: {e}")
         # Minimal fallback - still AI generated
-        return expand_ai_response(generate_ai_fallback(figma_link))
+        result = expand_ai_response(generate_ai_fallback(figma_link))
+    
+    # Merge with uploaded JSON data if provided
+    if json_data:
+        # JSON data takes priority over AI analysis
+        for key, value in json_data.items():
+            if value:  # Only override if JSON has actual content
+                result[key] = value
+    
+    return result
 
 def expand_ai_response(data: Dict[str, Any]) -> Dict[str, Any]:
-    """Expand AI response to ensure comprehensive structure"""
+    """Only add missing fields, don't override existing AI content"""
     
-    # Ensure all required fields exist with defaults
-    expanded = {
-        "name": data.get("name", "Application"),
-        "project_name": data.get("project_name", data.get("name", "Application")),
-        "description": data.get("description", "Comprehensive application with modern features and user-centric design"),
-        "category": data.get("category", "Digital Platform"),
-        "target_audience": data.get("target_audience", "Modern users seeking efficient digital solutions"),
-        "key_features": data.get("key_features", [
-            "Advanced user interface with intuitive navigation",
-            "Real-time data processing and synchronization",
-            "Comprehensive analytics and reporting dashboard", 
-            "Mobile-responsive design for all devices",
-            "Secure authentication and data protection"
-        ]),
-        "pages": data.get("pages", [{
-            "name": "Main User Flow",
-            "key_frames": [
-                {"name": "Landing Screen", "description": "Welcome interface with key features"},
-                {"name": "Dashboard", "description": "Main control center with overview"},
-                {"name": "Feature Access", "description": "Core functionality interface"},
-                {"name": "Settings Panel", "description": "Configuration and preferences"},
-                {"name": "Profile Management", "description": "User account and data management"},
-                {"name": "Analytics View", "description": "Data insights and performance metrics"}
-            ]
-        }]),
-        "ui_components": data.get("ui_components", [
-            "Responsive navigation system with mobile optimization",
-            "Advanced search with filtering and sorting capabilities",
-            "Interactive card-based content layout system",
-            "Comprehensive form components with real-time validation",
-            "Dynamic data visualization and charting components"
-        ]),
-        "colors": data.get("colors", {
-            "Primary": "#2563EB", "Secondary": "#10B981", "Accent": "#F59E0B",
-            "Background": "#F9FAFB", "Text": "#1F2937", "Success": "#059669",
-            "Warning": "#D97706", "Error": "#DC2626"
-        }),
-        "typography": data.get("typography", {
-            "primary_font": "Inter",
-            "secondary_font": "Roboto", 
-            "font_sizes": {"heading": "24px", "body": "16px", "caption": "14px"}
-        }),
-        "user_flows": data.get("user_flows", "Discovery -> Onboarding -> Core Usage -> Feature Exploration -> Optimization -> Retention"),
-        "technical_requirements": data.get("technical_requirements", {
-            "frontend": "React with TypeScript for robust development",
-            "backend": "Node.js with Express for scalable API architecture",
-            "database": "PostgreSQL with Redis caching for optimal performance",
-            "apis": "RESTful services with GraphQL for efficient data operations",
-            "deployment": "Cloud-native deployment with Docker and Kubernetes"
-        }),
-        "business_model": data.get("business_model", "Subscription-based model with tiered pricing and enterprise solutions"),
-        "competitive_analysis": data.get("competitive_analysis", "Competitive advantage through superior user experience, advanced features, and seamless integrations"),
-        "development_timeline": data.get("development_timeline", "MVP: 3 months, Beta: 6 months, Full release: 9 months with ongoing iterations"),
-        "scalability_considerations": data.get("scalability_considerations", "Microservices architecture with auto-scaling, load balancing, and distributed caching"),
-        "security_requirements": data.get("security_requirements", "Enterprise-grade security with encryption, authentication, compliance, and regular audits")
-    }
+    # Only add fields that are completely missing, preserve AI-generated content
+    if "business_model" not in data:
+        data["business_model"] = "Revenue generation through user engagement and premium features"
+    if "competitive_analysis" not in data:
+        data["competitive_analysis"] = "Market differentiation through innovative features and user experience"
+    if "development_timeline" not in data:
+        data["development_timeline"] = "Agile development with iterative releases and continuous improvement"
+    if "scalability_considerations" not in data:
+        data["scalability_considerations"] = "Cloud-native architecture designed for horizontal scaling"
+    if "security_requirements" not in data:
+        data["security_requirements"] = "Industry-standard security protocols and data protection measures"
     
-    return expanded
+    return data
 
 def generate_ai_fallback(figma_link: str) -> Dict[str, Any]:
     """AI-generated fallback when main analysis fails"""
