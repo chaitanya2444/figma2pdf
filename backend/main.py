@@ -49,19 +49,28 @@ def extract_figma_key(figma_url: str) -> str:
     
     raise ValueError("Invalid Figma URL — could not extract file key")
 
-def get_figma_file(file_key: str):
+def get_figma_file(file_key: str, max_retries=3):
     url = f"https://api.figma.com/v1/files/{file_key}"
     headers = {"X-Figma-Token": FIGMA_TOKEN}
     
-    print(f"DEBUG: Figma API URL: {url}")
-    print(f"DEBUG: Token exists: {bool(FIGMA_TOKEN)}")
-    print(f"DEBUG: Token starts with: {FIGMA_TOKEN[:10] if FIGMA_TOKEN else 'None'}...")
+    for attempt in range(max_retries):
+        response = httpx.get(url, headers=headers)
+        
+        if response.status_code == 200:
+            print(f"✅ Figma data fetched successfully!")
+            return response.json()
+        
+        elif response.status_code == 429:
+            retry_after = int(response.headers.get('Retry-After', 60))
+            wait_time = retry_after * (2 ** attempt)
+            print(f"⚠️ Rate limit hit (429). Waiting {wait_time}s before retry {attempt + 1}/{max_retries}...")
+            time.sleep(wait_time)
+            continue
+        
+        else:
+            response.raise_for_status()
     
-    response = httpx.get(url, headers=headers)
-    print(f"DEBUG: Response status: {response.status_code}")
-    
-    response.raise_for_status()
-    return response.json()
+    raise HTTPException(status_code=429, detail="Figma API rate limited after retries. Try again later.")
 
 class GenerateRequest(BaseModel):
     figma_link: str
@@ -152,4 +161,4 @@ async def download_pdf(filename: str):
     return FileResponse(file_path, media_type="application/pdf", filename=filename)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8002, reload=True)

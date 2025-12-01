@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from io import BytesIO
 
+
 TEMP_DIR = Path("C:/temp/figma2pdf")
 TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -38,7 +39,7 @@ def generate_architecture_prompt(figma_data: dict) -> str:
     
     return prompt
 
-def create_architecture_diagram(prompt: str) -> str:
+def create_architecture_diagram(prompt: str, figma_data: dict = None) -> str:
     """Create a simple architecture diagram using matplotlib"""
     fig, ax = plt.subplots(1, 1, figsize=(12, 8))
     ax.set_xlim(0, 10)
@@ -63,8 +64,15 @@ def create_architecture_diagram(prompt: str) -> str:
     ax.add_patch(api_box)
     ax.text(5, 7, 'API Gateway', ha='center', va='center', fontweight='bold')
     
-    # Microservices
-    services = ['Auth Service', 'Product Service', 'Cart Service', 'Payment Service']
+    # Dynamic Microservices based on Figma data
+    default_services = ['Auth Service', 'Product Service', 'Cart Service', 'Payment Service']
+    
+    if figma_data:
+        components = [frame.get('name', '') for page in figma_data.get('pages', []) 
+                     for frame in page.get('key_frames', [])][:4]
+        services = [f"{name.split()[0]} Service" for name in components if name] or default_services
+    else:
+        services = default_services
     for i, service in enumerate(services):
         x = 1 + i * 2
         service_box = patches.Rectangle((x, 4), 1.5, 1, linewidth=2,
@@ -107,11 +115,13 @@ def create_architecture_diagram(prompt: str) -> str:
     
     return base64.b64encode(img_data).decode()
 
+
+
 def generate_ai_architecture_diagram(figma_data: dict) -> str:
     """Main function to generate architecture diagram from Figma data"""
     try:
         prompt = generate_architecture_prompt(figma_data)
-        diagram_b64 = create_architecture_diagram(prompt)
+        diagram_b64 = create_architecture_diagram(prompt, figma_data)
         return f"data:image/png;base64,{diagram_b64}"
     except Exception as e:
         print(f"Diagram generation error: {e}")
