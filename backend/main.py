@@ -126,8 +126,9 @@ async def generate_pdf_simple(request: Request):
         
         pdf_path = generate_pdf_from_data(processed_data)
         
+        project_name = processed_data.get('project_name', processed_data.get('name', 'Untitled'))
         return FileResponse(pdf_path, media_type="application/pdf", 
-                          filename=f"{processed_data['project_name'].replace(' ', '_')}.pdf")
+                          filename=f"{project_name.replace(' ', '_')}.pdf")
         
     except httpx.HTTPStatusError as e:
         if e.response.status_code == 403:

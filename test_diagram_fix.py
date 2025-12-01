@@ -20,7 +20,7 @@ diagram_base64 = generate_ai_architecture_diagram(figma_data)
 print("Success? Starts with data:image:", diagram_base64[:50] + "...")
 
 if diagram_base64.startswith("data:image/png;base64,"):
-    print("✅ Diagram generation working perfectly!")
-    print("✅ Ready to embed in PDF!")
+    print("SUCCESS: Diagram generation working perfectly!")
+    print("SUCCESS: Ready to embed in PDF!")
 else:
-    print("❌ Issue with diagram generation")
+    print("ERROR: Issue with diagram generation")

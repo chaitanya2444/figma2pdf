@@ -22,7 +22,7 @@ def generate_architecture_prompt(figma_data: dict) -> str:
         for frame in page.get('key_frames', []):
             components.append(frame.get('name', 'Component'))
     
-    project_name = figma_data.get('project_name', 'App')
+    project_name = figma_data.get('project_name', figma_data.get('name', 'App'))
     
     prompt = f"""
     Create a system architecture for {project_name} with these components: {', '.join(components[:5])}.

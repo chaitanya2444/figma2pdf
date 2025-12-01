@@ -92,7 +92,8 @@ def get_smart_fallback(figma_link: str) -> Dict[str, Any]:
     
     return {
         "name": f"{app_type['name']}",
-        "pages": [{"name": "Page 1", "frames": app_type['frames']}],
+        "project_name": f"{app_type['name']}",
+        "pages": [{"name": "Page 1", "key_frames": app_type['frames']}],
         "colors": app_type['colors'],
         "fonts": app_type['fonts'],
         "user_flows": app_type['flow'],
