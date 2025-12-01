@@ -11,8 +11,8 @@ import httpx
 
 load_dotenv()
 
-from services.pdf_service import generate_pdf_from_data
-from services.figma_service import parse_figma_with_llm
+from services.pdf_service import generate_pdf_from_data, generate_pdf_from_structure
+from services.figma_service import parse_figma_with_llm, parse_figma_file_from_url
 
 app = FastAPI(title="FigmaToPDF-Pro")
 
@@ -153,6 +153,17 @@ async def generate_diagram_only(req: DiagramRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/generate_pdf_from_figma")
+async def generate_pdf_from_figma(figma_url: str = Form(...)):
+    """Generate developer documentation PDF from Figma API data"""
+    try:
+        struct = parse_figma_file_from_url(figma_url)
+        pdf_path = generate_pdf_from_structure(struct)
+        filename = os.path.basename(pdf_path)
+        return {"status": "ok", "pdf": f"/api/download/{filename}", "filename": filename}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/api/download/{filename}")
 async def download_pdf(filename: str):
