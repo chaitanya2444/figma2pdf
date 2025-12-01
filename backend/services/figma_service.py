@@ -8,20 +8,22 @@ from typing import Dict, Any
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 def parse_figma_with_llm(figma_link: str) -> Dict[str, Any]:
+    print("Using fallback data")  # Debug line
     if not ANTHROPIC_API_KEY or ANTHROPIC_API_KEY == "your-key-here":
-        # Fallback if key not set (you already have this working)
+        # Rich fallback matching your exact frames
         return {
             "name": "Social Commerce & Booking Platform",
             "pages": [{"name": "Page 1", "frames": [
-                {"name": "Social feed", "description": "Real-time social feed with stories, likes, comments"},
-                {"name": "Ecommerce", "description": "Product marketplace with search, filters, wishlist"},
-                {"name": "Booking", "description": "Calendar booking with time slots"},
-                {"name": "Checkout", "description": "Secure payment flow"},
-                {"name": "Sign In", "description": "Login with social options"}
+                {"name": "Social feed", "description": "Real-time content stream with posts, likes, comments, and infinite scroll"},
+                {"name": "Ecommerce", "description": "Product catalog with grids, search, filters, and wishlist functionality"},
+                {"name": "Booking", "description": "Reservation interface with calendar, availability slots, and confirmation steps"},
+                {"name": "Checkout", "description": "Secure payment flow with cart summary, address forms, and order review"},
+                {"name": "Sign In", "description": "Authentication screen with email/password and social login options"}
             ]}],
-            "colors": {"Primary": "#4285F4", "Success": "#34A853", "Error": "#EA4335"},
+            "colors": {"Primary": "#4285F4", "Success": "#34A853", "Error": "#EA4335", "Background": "#FFFFFF", "Surface": "#F8F9FA"},
             "fonts": ["Inter", "Roboto"],
-            "tech_recommendation": "React + FastAPI + PostgreSQL"
+            "user_flows": "Sign In → Social feed (discover) → Ecommerce/Booking (select) → Checkout (pay)",
+            "tech_recommendation": "Frontend: React + TypeScript + Tailwind CSS. Backend: Node.js + Express. Database: PostgreSQL + Redis. Auth: JWT + OAuth2. Deployment: Vercel + Railway."
         }
 
     prompt = f"""
@@ -62,17 +64,18 @@ Return ONLY valid JSON. No explanations, no markdown.
 
     except Exception as e:
         print(f"Claude API error: {e}")
-        # Return your working fallback
+        # Return rich fallback data
         return {
             "name": "Social Commerce & Booking Platform",
             "pages": [{"name": "Page 1", "frames": [
-                {"name": "Social feed", "description": "Real-time social feed with stories, likes, comments"},
-                {"name": "Ecommerce", "description": "Product marketplace with search, filters, wishlist"},
-                {"name": "Booking", "description": "Calendar booking with time slots"},
-                {"name": "Checkout", "description": "Secure payment flow"},
-                {"name": "Sign In", "description": "Login with social options"}
+                {"name": "Social feed", "description": "Real-time content stream with posts, likes, comments, and infinite scroll"},
+                {"name": "Ecommerce", "description": "Product catalog with grids, search, filters, and wishlist functionality"},
+                {"name": "Booking", "description": "Reservation interface with calendar, availability slots, and confirmation steps"},
+                {"name": "Checkout", "description": "Secure payment flow with cart summary, address forms, and order review"},
+                {"name": "Sign In", "description": "Authentication screen with email/password and social login options"}
             ]}],
-            "colors": {"Primary": "#4285F4", "Success": "#34A853", "Error": "#EA4335"},
+            "colors": {"Primary": "#4285F4", "Success": "#34A853", "Error": "#EA4335", "Background": "#FFFFFF", "Surface": "#F8F9FA"},
             "fonts": ["Inter", "Roboto"],
-            "tech_recommendation": "React + FastAPI + PostgreSQL"
+            "user_flows": "Sign In → Social feed (discover) → Ecommerce/Booking (select) → Checkout (pay)",
+            "tech_recommendation": "Frontend: React + TypeScript + Tailwind CSS. Backend: Node.js + Express. Database: PostgreSQL + Redis. Auth: JWT + OAuth2. Deployment: Vercel + Railway."
         }

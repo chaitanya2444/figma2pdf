@@ -55,15 +55,15 @@ def generate_architecture_diagram(data: dict) -> str:
     cropped = Image.open(screenshot_path)
     cropped = cropped.crop(cropped.getbbox())
     
-    # Save the diagram to disk
-    cropped.save("architecture_diagram.png", "PNG")
+    # Save the diagram to disk using full path
+    cropped.save(final_diagram_path, "PNG")
 
     # Clean up temp files
     try:
-        os.remove("temp_diagram.html")
-        os.remove("temp_screenshot.png")
+        os.remove(html_path)
+        os.remove(screenshot_path)
     except:
         pass
 
-    # THIS IS THE ONLY LINE THAT FIXES EVERYTHING
-    return "architecture_diagram.png"
+    # Return the full path for ReportLab
+    return final_diagram_path
