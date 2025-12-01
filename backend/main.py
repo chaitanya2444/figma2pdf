@@ -13,6 +13,7 @@ load_dotenv()
 
 from services.pdf_service import generate_pdf_from_data, generate_pdf_from_structure
 from services.figma_service import parse_figma_with_llm, parse_figma_file_from_url
+from services.dynamic_pdf_generator import generate_dynamic_pdf
 
 app = FastAPI(title="FigmaToPDF-Pro")
 
@@ -162,6 +163,16 @@ async def generate_pdf_from_figma(figma_url: str = Form(...)):
         pdf_path = generate_pdf_from_structure(struct)
         filename = os.path.basename(pdf_path)
         return {"status": "ok", "pdf": f"/api/download/{filename}", "filename": filename}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/generate_dynamic_pdf")
+async def generate_dynamic_pdf_endpoint(figma_url: str = Form(...)):
+    """✅ Generate truly dynamic PDF that fetches Figma data every time"""
+    try:
+        pdf_path = generate_dynamic_pdf(figma_url)
+        filename = os.path.basename(pdf_path)
+        return {"status": "success", "pdf": f"/api/download/{filename}", "filename": filename}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
